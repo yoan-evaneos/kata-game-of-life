@@ -125,7 +125,7 @@ class Board
      */
     public function __toString()
     {
-        $result = '--------------';
+        $result = '--------------'.PHP_EOL;
         for ($i = 0; $i < $this->size; $i++) {
             for ($j = 0; $j < $this->size; $j++) {
                 $result .= $this->getCellAt($i, $j) !== null ? 'o' : ' ';
