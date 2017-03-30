@@ -9,8 +9,12 @@ namespace Kata;
  **/
 class Board
 {
+    const DEAD = 'dead';
+    const STAY = 'stay';
+    const ALIVE = 'alive';
     /** @var integer */
     private $size;
+
     /** @var array */
     private $cells;
 
@@ -34,15 +38,15 @@ class Board
     }
 
     /**
-     * @param $int
-     * @param $int1
+     * @param $x
+     * @param $y
      *
      * @return Cell|null
      */
-    public function getCellAt($int, $int1)
+    public function getCellAt($x, $y)
     {
-        if (isset($this->cells[$int][$int1])) {
-            return $this->cells[$int][$int1];
+        if (isset($this->cells[$x][$y])) {
+            return $this->cells[$x][$y];
         }
         return null;
     }
@@ -87,13 +91,48 @@ class Board
         $countNeighboursAt = $this->countNeighboursAt($x, $y);
 
         if ($countNeighboursAt < 2 || $countNeighboursAt > 3) {
-            return 'dead';
+            return self::DEAD;
         }
         if ($countNeighboursAt === 2) {
-            return 'stay';
+            return self::STAY;
         }
         if ($countNeighboursAt === 3) {
-            return 'alive';
+            return self::ALIVE;
         }
+    }
+
+    /**
+     * @return \Kata\Board
+     */
+    public function updateBoard()
+    {
+        $newBoard = new Board($this->size);
+        for ($i = 0; $i < $this->size; $i++) {
+            for ($j = 0; $j < $this->size; $j++) {
+                $nextStateOfCellAt = $this->getNextStateOfCellAt($i, $j);
+                if ($nextStateOfCellAt === self::ALIVE ||
+                    $nextStateOfCellAt === self::STAY && $this->getCellAt($i, $j) !== null
+                ) {
+                    $newBoard->createCell($i, $j, new Cell());
+                }
+            }
+        }
+        return $newBoard;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $result = '--------------';
+        for ($i = 0; $i < $this->size; $i++) {
+            for ($j = 0; $j < $this->size; $j++) {
+                $result .= $this->getCellAt($i, $j) !== null ? 'o' : ' ';
+            }
+            $result .= PHP_EOL;
+        }
+        $result .= '--------------'.PHP_EOL;
+        return $result;
     }
 }

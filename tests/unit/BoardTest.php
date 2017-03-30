@@ -37,6 +37,38 @@ class BoardTest extends \PHPUnit_Framework_TestCase
      */
     public function should_return_next_state_of_cell()
     {
+        $board = $this->given_there_is_a_board();
+
+        $result = $board->getNextStateOfCellAt(3, 3);
+        $this->assertEquals(Board::ALIVE, $result);
+
+        $result = $board->getNextStateOfCellAt(5, 3);
+        $this->assertEquals(Board::STAY, $result);
+
+        $result = $board->getNextStateOfCellAt(2, 3);
+        $this->assertEquals(Board::DEAD, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_update_the_board_after_one_run()
+    {
+        $board = $this->given_there_is_a_board();
+
+        /** @var \Kata\Board $newBoard */
+        $newBoard = $board->updateBoard();
+
+        $this->assertNull($newBoard->getCellAt(2,3));
+        $this->assertNotNull($newBoard->getCellAt(5, 3));
+        $this->assertNotNull($newBoard->getCellAt(3, 2));
+    }
+
+    /**
+     * @return \Kata\Board
+     */
+    private function given_there_is_a_board()
+    {
         $board = new Board(10);
         $board->createCell(2, 3, new Cell());
         $board->createCell(3, 3, new Cell());
@@ -44,13 +76,6 @@ class BoardTest extends \PHPUnit_Framework_TestCase
         $board->createCell(5, 3, new Cell());
         $board->createCell(4, 4, new Cell());
 
-        $result = $board->getNextStateOfCellAt(3, 3);
-        $this->assertEquals('alive', $result);
-
-        $result = $board->getNextStateOfCellAt(5, 3);
-        $this->assertEquals('stay', $result);
-
-        $result = $board->getNextStateOfCellAt(2, 3);
-        $this->assertEquals('dead', $result);
+        return $board;
     }
 }
